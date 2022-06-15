@@ -33,10 +33,19 @@
 
             </div>
             <div class="card-body">
-                <p class="login-box-msg">Masuk untuk memulai sesi Anda</p>
+                <?php if (!empty(session()->getFlashdata('username'))) : ?>
+                    <div class="alert alert-danger" role="alert">
+                        <?php echo session()->getFlashdata('username'); ?>
+                    </div>
+                <?php endif; ?>
+                <?php if (!empty(session()->getFlashdata('password'))) : ?>
+                    <div class="alert alert-danger" role="alert">
+                        <?php echo session()->getFlashdata('password'); ?>
+                    </div>
+                <?php endif; ?>
                 <form method="post" action="/auth/valid_login" method="post">
                     <div class="input-group mb-3">
-                        <input type="text" class="form-control" placeholder="NIP" name="nip" required>
+                        <input type="text" class="form-control" placeholder="username" name="username" required>
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-envelope"></span>

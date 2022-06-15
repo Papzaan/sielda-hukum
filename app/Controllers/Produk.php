@@ -3,6 +3,8 @@
 namespace App\Controllers;
 
 use CodeIgniter\RESTful\ResourceController;
+use App\Models\OpdModel;
+use App\Models\ProdukModel;
 
 class Produk extends ResourceController
 
@@ -22,7 +24,7 @@ class Produk extends ResourceController
         //Halaman List Produk Hukum
         $dataProduct = $this->model->findAll();
 
-        return view('pages/ListProduk', ['products' => $dataProduct]);
+        return view('pages/ListProduk', ['produk' => $dataProduct]);
     }
 
     /**
@@ -43,7 +45,9 @@ class Produk extends ResourceController
     public function new()
     {
         //Halaman Tambah Produk Hukum
-        return view('pages/TambahProduk');
+        $model = new OpdModel();
+        $data['opd_nama'] = $model->getdataOpd();
+        return view('pages/TambahProduk', $data);
     }
 
     /**
@@ -53,9 +57,49 @@ class Produk extends ResourceController
      */
     public function create()
     {
+        if (!$this->validate([
+            'judul' => [
+                'rules' => 'required',
+                'errors' => [
+                    'required' => '{field} Tidak boleh kosong'
+                ]
+            ],
+            'usulan_produk' => [
+                'rules' => 'uploaded[usulan_produk]|mime_in[usulan_produk,application/pdf,application/docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/zip,application/msword,application/vnd.ms-office]|max_size[usulan_produk,20480]',
+                'errors' => [
+                    'uploaded' => 'Harus Ada File yang diupload',
+                    'mime_in' => 'File Extention Harus Berupa docx,doc',
+                    'max_size' => 'Ukuran File Maksimal 20 MB'
+                ]
+            ]
+        ])) {
+            session()->setFlashdata('error', $this->validator->listErrors());
+            return redirect()->to('produk/new')->withInput();
+        }
+        //Tangkap File Docx
+        $berkas = $this->request->getFile('usulan_produk');
+        //Pindahkan ke Folder Upload/berkas
+        $berkas->move('uploads/berkas');
+        //ambil nama file
+        $namaFile = $berkas->getName();
+
         //Menambah Produk Hukum Baru
-        $dataProduct = $this->request->getPost();
-        $this->model->insert($dataProduct);
+        //$dataProduct = $this->request->getPost();
+        $this->model->insert([
+            'opd' => $this->request->getVar('opd'),
+            'no_usulan' => $this->request->getVar('no_usulan'),
+            'judul' => $this->request->getVar('judul'),
+            'jenis' => $this->request->getVar('jenis'),
+            'tgl_surat' => $this->request->getVar('tgl_surat'),
+            'tgl_input' => $this->request->getVar('tgl_input'),
+            'perihal_nota' => $this->request->getVar('perihal_nota'),
+            'isi_nota' => $this->request->getVar('isi_nota'),
+            'usulan_produk' => $namaFile,
+            'penanggung_jawab' => $this->request->getVar('penanggung_jawab'),
+            'no_wa' => $this->request->getVar('no_wa')
+        ]);
+
+        session()->setFlashdata('pesan', 'Data Berhasil ditambahkan.');
 
         return redirect()->to('/produk');
     }
@@ -80,10 +124,55 @@ class Produk extends ResourceController
      */
     public function update($id = null)
     {
-        //Untuk Update
-        $dataProduct = $this->request->getPost();
-        $this->model->where('id', $id)->set($dataProduct)->update();
+        if (!$this->validate([
+            'judul' => [
+                'rules' => 'required',
+                'errors' => [
+                    'required' => '{field} Tidak boleh kosong'
+                ]
+            ],
+            'usulan_produk' => [
+                'rules' => 'mime_in[usulan_produk,application/pdf,application/docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/zip,application/msword,application/vnd.ms-office]|max_size[usulan_produk,20480]',
+                'errors' => [
+                    'mime_in' => 'File Extention Harus Berupa docx,doc',
+                    'max_size' => 'Ukuran File Maksimal 20 MB'
+                ]
+            ]
+        ])) {
+            session()->setFlashdata('error', $this->validator->listErrors());
+            return redirect()->to('produk/' . $id . '/edit')->withInput();
+        }
+        //Tangkap File Docx
+        $berkas = $this->request->getFile('usulan_produk');
 
+        // cek berkas, apakah berkas tetap berkas lama
+        if ($berkas->getError() == 4) {
+            $namaFile = $this->request->getVar('usulan_produk_lama');
+        } else {
+            //ambil nama file
+            $namaFile = $berkas->getName();
+            //pindahkan file
+            $berkas->move('uploads/berkas', $namaFile);
+            //hapus file lama
+            unlink('uploads/berkas/' . $this->request->getVar('usulan_produk_lama'));
+        }
+        //Untuk Update
+        //$dataProduct = $this->request->getPost();
+        $this->model->where('id', $id)->set([
+            'opd' => $this->request->getVar('opd'),
+            'no_usulan' => $this->request->getVar('no_usulan'),
+            'judul' => $this->request->getVar('judul'),
+            'jenis' => $this->request->getVar('jenis'),
+            'tgl_surat' => $this->request->getVar('tgl_surat'),
+            'tgl_input' => $this->request->getVar('tgl_input'),
+            'perihal_nota' => $this->request->getVar('perihal_nota'),
+            'isi_nota' => $this->request->getVar('isi_nota'),
+            'usulan_produk' => $namaFile,
+            'penanggung_jawab' => $this->request->getVar('penanggung_jawab'),
+            'no_wa' => $this->request->getVar('no_wa')
+        ])->update();
+
+        session()->setFlashdata('pesan', 'Data Berhasil diubah.');
         return redirect()->to('/produk');
     }
 
@@ -98,5 +187,13 @@ class Produk extends ResourceController
         $this->model->delete($id);
 
         return redirect()->to('/produk');
+    }
+
+
+    function download($id)
+    {
+        $berkas = new ProdukModel();
+        $data = $berkas->find($id);
+        return $this->response->download('uploads/berkas/' . $data->usulan_produk, null);
     }
 }

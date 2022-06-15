@@ -56,6 +56,10 @@ class TbProduk extends Migration
                 'type' => 'VARCHAR',
                 'constraint' => 25,
             ],
+            'id_opd' => [
+                'type' => 'int',
+                'constraint' => 25,
+            ],
             'status' => [
                 'type' => 'VARCHAR',
                 'constraint' => 255,

@@ -10,8 +10,7 @@ class ProdukModel extends Model
     protected $table                = 'tb_produk';
     protected $primaryKey           = 'id';
     protected $useAutoIncrement     = true;
-    protected $insertID             = 0;
-    protected $returnType           = 'array';
+    protected $returnType           = 'object';
     protected $useSoftDeletes       = false;
     protected $protectFields        = true;
     protected $allowedFields        = ["opd", "no_usulan", 'judul', 'jenis', 'tgl_surat', 'tgl_input', 'perihal_nota', 'isi_nota', 'usulan_produk', 'penanggung_jawab', 'no_wa', 'status'];
@@ -39,4 +38,13 @@ class ProdukModel extends Model
     protected $afterFind            = [];
     protected $beforeDelete         = [];
     protected $afterDelete          = [];
+
+    public function getProduk($id_opd = false)
+    {
+        if ($id_opd = false) {
+            return $this->findAll();
+        }
+
+        return $this->where(['id_opd' => $id_opd])->first();
+    }
 }

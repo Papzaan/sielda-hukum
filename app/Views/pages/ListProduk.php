@@ -33,6 +33,11 @@
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
+                            <?php if (!empty(session()->getFlashdata('pesan'))) : ?>
+                                <div class="alert alert-success" role="alert">
+                                    <?php echo session()->getFlashdata('pesan'); ?>
+                                </div>
+                            <?php endif; ?>
                             <table id="example1" class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
@@ -54,30 +59,30 @@
                                 </thead>
                                 <tbody>
                                     <?php $i = 1; ?>
-                                    <?php foreach ($products as $product) : ?>
+                                    <?php foreach ($produk as $product) : ?>
                                         <tr>
                                             <td><?= $i++; ?></td>
-                                            <td><?= $product['opd']; ?></td>
-                                            <td><?= $product['no_usulan']; ?></td>
-                                            <td><?= $product['judul']; ?></td>
-                                            <td><?= $product['jenis']; ?></td>
-                                            <td><?= $product['tgl_surat']; ?></td>
-                                            <td><?= $product['tgl_input']; ?></td>
-                                            <td><?= $product['perihal_nota']; ?></td>
-                                            <td><?= $product['isi_nota']; ?></td>
-                                            <td><?= $product['usulan_produk']; ?></td>
-                                            <td><?= $product['penanggung_jawab']; ?></td>
-                                            <td><?= $product['no_wa']; ?></td>
-                                            <td><?= $product['status']; ?></td>
+                                            <td><?= $product->opd; ?></td>
+                                            <td><?= $product->no_usulan; ?></td>
+                                            <td><?= $product->judul; ?></td>
+                                            <td><?= $product->jenis; ?></td>
+                                            <td><?= $product->tgl_surat; ?></td>
+                                            <td><?= $product->tgl_input; ?></td>
+                                            <td><?= $product->perihal_nota; ?></td>
+                                            <td><?= $product->isi_nota; ?></td>
+                                            <td><a class="btn btn-info" href="<?= base_url(); ?>/uploads/berkas/<?= $product->usulan_produk; ?>">Download</a></td>
+                                            <td><?= $product->penanggung_jawab; ?></td>
+                                            <td><?= $product->no_wa; ?></td>
+                                            <td><?= $product->status; ?></td>
                                             <td>
                                                 <div class="row">
                                                     <div class="col-auto">
-                                                        <a href="/produk/<?= $product['id']; ?>/edit" class="btn btn-outline-warning mr-2">Edit</a>
+                                                        <a href="/produk/<?= $product->id; ?>/edit" class="btn btn-outline-warning mr-2">Edit</a>
                                                     </div>
                                                     <div class="col-auto px-0">
-                                                        <form action="/produk/<?= $product['id']; ?>" method="POST">
+                                                        <form action="/produk/<?= $product->id; ?>" method="POST">
                                                             <input type="hidden" name="_method" value="DELETE">
-                                                            <button type="submit" class="btn btn-outline-danger">Delete</button>
+                                                            <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Apakah Anda Yakin ?') ">Delete</button>
                                                         </form>
                                                     </div>
                                                 </div>
@@ -98,6 +103,31 @@
         <!-- /.container-fluid -->
     </section>
     <!-- /.content -->
+    <div class="modal fade" id="modal-default">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Default Modal</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="/produk/<?= $product->id; ?>" method="POST">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Apakah Anda Yakin ?') ">Delete</button>
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
 </div>
 <!-- /.content-wrapper -->
 <?= $this->endSection(); ?>

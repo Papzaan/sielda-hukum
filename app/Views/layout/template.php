@@ -208,6 +208,26 @@
             });
         });
     </script>
+    <script>
+        function prevFile() {
+            const berkas = document.querySelector('#usulan_produk');
+            const Berkaslabel = document.querySelector('.custom-file-label');
+
+            Berkaslabel.textContent = berkas.files[0].name;
+        }
+    </script>
+
+    <script>
+        $("#nama_opd").change(function() {
+            var id = $(this).children(":selected").attr("id_opd");
+        });
+
+        function update_nik() {
+            var select = document.getElementById('nama_opd');
+            var option = select.options[select.selectedIndex];
+            document.getElementById('opd').value = option.id;
+        }
+    </script>
 </body>
 
 </html>

@@ -26,12 +26,29 @@
                         </div>
                         <!-- /.card-header -->
                         <!-- form start -->
-                        <form action="/produk" method="POST" enctype='multipart/form-data'>
+                        <form action="/produk/create" method="POST" enctype='multipart/form-data'>
                             <?php csrf_field(); ?>
                             <div class="card-body">
+                                <?php if (!empty(session()->getFlashdata('error'))) : ?>
+                                    <div class="alert alert-danger" role="alert">
+                                        <h4>Periksa Entrian Form</h4>
+                                        </hr />
+                                        <?php echo session()->getFlashdata('error'); ?>
+                                    </div>
+                                <?php endif; ?>
                                 <div class="form-group">
                                     <label for="exampleInputEmail1">Nama OPD</label>
-                                    <input type="text" class="form-control" name="opd" placeholder="OPD">
+                                    <!-- <label for="nama" class="control-label">Nama Customer</label> -->
+                                    <!-- mengulang data berdasarkan data yang telah diambil dari controller -->
+                                    <select class="form-control theSelect" id="nama_opd" name="opd" onChange="update_opd()">
+                                        <option value="" disabled selected>Pilih OPD</option>
+                                        <?php foreach ($opd_nama as $kr) { ?>
+                                            <option id="<?php echo $kr["nama_opd"]; ?>" name="opd" value="<?php echo $kr["nama_opd"]; ?>">
+                                                <?php echo $kr["nama_opd"]; ?>
+                                            </option>
+                                        <?php } ?>
+                                    </select>
+                                    <!-- <input type="text" class="form-control" name="opd" placeholder="OPD"> -->
                                 </div>
                                 <div class="form-group">
                                     <label for="exampleInputPassword1">Nomor Usulan</label>
@@ -39,19 +56,19 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="exampleInputPassword1">Judul Rancangan</label>
-                                    <input type="text" class="form-control" name="judul" placeholder="Judul Rancangan">
+                                    <input type="text" class="form-control " name="judul" placeholder="Judul Rancangan">
                                 </div>
                                 <div class="form-group">
                                     <label for="exampleInputPassword1">Jenis</label>
                                     <input type="text" class="form-control" name="jenis" placeholder="Jenis">
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group ">
                                     <label for="exampleInputPassword1">Tanggal Surat</label>
-                                    <input type="date" class="form-control" name="tgl_surat" placeholder="Tanggal Surat">
+                                    <input type="date" class="form-control col-md-3" name="tgl_surat" placeholder="Tanggal Surat">
                                 </div>
                                 <div class="form-group">
                                     <label for="exampleInputPassword1">Tanggal Input</label>
-                                    <input type="date" class="form-control" name="tgl_input" placeholder="Tanggal Input">
+                                    <input type="date" class="form-control col-md-3" name="tgl_input" placeholder="Tanggal Input">
                                 </div>
                                 <div class="form-group">
                                     <label for="exampleInputPassword1">Perihal Nota Dinas</label>
@@ -64,9 +81,9 @@
                                 <div class="form-group">
                                     <label for="exampleInputFile">Usulan Produk Hukum</label>
                                     <div class="input-group">
-                                        <div class="custom-file">
-                                            <input type="file" class="custom-file-input" name="usulan_produk">
-                                            <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                                        <div class="custom-file col-md-3">
+                                            <input type="file" class="custom-file-input" id="usulan_produk" name="usulan_produk" onchange="prevFile()">
+                                            <label class="custom-file-label" for="usulan_produk">Choose file</label>
                                         </div>
                                     </div>
                                 </div>

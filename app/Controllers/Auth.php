@@ -74,7 +74,7 @@ class Auth extends BaseController
         $data = $this->request->getPost();
 
         //ambil data user di database yang usernamenya sama 
-        $user = $this->userModel->where('nip', $data['nip'])->first();
+        $user = $this->userModel->where('username', $data['username'])->first();
 
         //cek apakah username ditemukan
         if ($user) {
@@ -87,8 +87,9 @@ class Auth extends BaseController
                 //jika benar, arahkan user masuk ke aplikasi 
                 $sessLogin = [
                     'isLogin' => true,
-                    'username' => $user['nip'],
-                    'nama' => $user['nama'],
+                    'username' => $user['username'],
+                    'nama' => $user['name'],
+                    'opd' => $user['id_opd'],
                     'status' => $user['status']
                 ];
                 $this->session->set($sessLogin);
