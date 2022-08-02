@@ -42,18 +42,19 @@
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>Nama OPD</th>
+                                        <!-- <th>Nama OPD</th> -->
+                                        <th>Kode Surat</th>
                                         <th>Nomor Usulan</th>
                                         <th>Judul Rancangan</th>
                                         <th>Jenis</th>
-                                        <th>Tanggal Surat</th>
                                         <th>Tanggal Masuk</th>
                                         <th>Perihal Nota Dinas</th>
                                         <th>Isi Nota Dinas</th>
                                         <th>Usulan</th>
+                                        <th>Status</th>
+                                        <th>Tanggal Surat</th>
                                         <th>Penanggung Jawab</th>
                                         <th>No WA</th>
-                                        <th>Status</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -62,22 +63,26 @@
                                     <?php foreach ($produk as $product) : ?>
                                         <tr>
                                             <td><?= $i++; ?></td>
-                                            <td><?= $product->opd; ?></td>
+                                            <!-- <td><?= $product->nama_opd; ?></td> -->
+                                            <td><?= $product->id; ?></td>
                                             <td><?= $product->no_usulan; ?></td>
                                             <td><?= $product->judul; ?></td>
                                             <td><?= $product->jenis; ?></td>
-                                            <td><?= $product->tgl_surat; ?></td>
+
                                             <td><?= $product->tgl_input; ?></td>
                                             <td><?= $product->perihal_nota; ?></td>
-                                            <td><?= $product->isi_nota; ?></td>
+                                            <td><a class="btn btn-info" href="<?= base_url(); ?>/uploads/berkas/<?= $product->nota_dinas; ?>">Download</a></td>
                                             <td><a class="btn btn-info" href="<?= base_url(); ?>/uploads/berkas/<?= $product->usulan_produk; ?>">Download</a></td>
+                                            <td><?= $product->status; ?></td>
+                                            <td><?= $product->tgl_surat; ?></td>
                                             <td><?= $product->penanggung_jawab; ?></td>
                                             <td><?= $product->no_wa; ?></td>
-                                            <td><?= $product->status; ?></td>
+
                                             <td>
                                                 <div class="row">
                                                     <div class="col-auto">
                                                         <a href="/produk/<?= $product->id; ?>/edit" class="btn btn-outline-warning mr-2">Edit</a>
+                                                        <a href="/home/CetakKodeSurat/<?= $product->id; ?>" class="btn btn-outline-info mr-2">Print Kode Surat</a>
                                                     </div>
                                                     <div class="col-auto px-0">
                                                         <form action="/produk/<?= $product->id; ?>" method="POST">
@@ -103,31 +108,7 @@
         <!-- /.container-fluid -->
     </section>
     <!-- /.content -->
-    <div class="modal fade" id="modal-default">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Default Modal</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form action="/produk/<?= $product->id; ?>" method="POST">
-                        <input type="hidden" name="_method" value="DELETE">
-                        <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Apakah Anda Yakin ?') ">Delete</button>
-                    </form>
-                </div>
-                <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
-                </div>
-            </div>
-            <!-- /.modal-content -->
-        </div>
-        <!-- /.modal-dialog -->
-    </div>
-    <!-- /.modal -->
+
 </div>
 <!-- /.content-wrapper -->
 <?= $this->endSection(); ?>

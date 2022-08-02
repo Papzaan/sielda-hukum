@@ -36,14 +36,15 @@
                                         <?php echo session()->getFlashdata('error'); ?>
                                     </div>
                                 <?php endif; ?>
+                                <input type="hidden" name="status" id="status" value="dibuat">
                                 <div class="form-group">
                                     <label for="exampleInputEmail1">Nama OPD</label>
                                     <!-- <label for="nama" class="control-label">Nama Customer</label> -->
                                     <!-- mengulang data berdasarkan data yang telah diambil dari controller -->
-                                    <select class="form-control theSelect" id="nama_opd" name="opd" onChange="update_opd()">
-                                        <option value="" disabled selected>Pilih OPD</option>
+                                    <select class="form-control theSelect" id="nama_opd" name="id_opd" onChange="update_opd()">
+                                        <!-- <option value="" disabled selected>Pilih OPD</option> -->
                                         <?php foreach ($opd_nama as $kr) { ?>
-                                            <option id="<?php echo $kr["nama_opd"]; ?>" name="opd" value="<?php echo $kr["nama_opd"]; ?>">
+                                            <option id="<?php echo $kr["nama_opd"]; ?>" name="id_opd" value="<?php echo $kr["id_opd"]; ?>">
                                                 <?php echo $kr["nama_opd"]; ?>
                                             </option>
                                         <?php } ?>
@@ -69,6 +70,15 @@
                                 <div class="form-group">
                                     <label for="exampleInputPassword1">Tanggal Input</label>
                                     <input type="date" class="form-control col-md-3" name="tgl_input" placeholder="Tanggal Input">
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputFile">Nota Dinas</label>
+                                    <div class="input-group">
+                                        <div class="custom-file col-md-3">
+                                            <input type="file" class="custom-file-input" id="nota_dinas" name="nota_dinas" onchange="prevFilen()">
+                                            <label class="custom-file-label" for="usulan_produk">Choose file</label>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="form-group">
                                     <label for="exampleInputPassword1">Perihal Nota Dinas</label>

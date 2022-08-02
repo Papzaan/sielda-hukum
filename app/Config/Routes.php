@@ -23,6 +23,7 @@ $routes->setTranslateURIDashes(false);
 $routes->set404Override();
 $routes->setAutoRoute(true);
 $routes->resource('produk');
+$routes->add('produk/editstatus/(:segment)', 'Produk::editstatus/$1');
 
 /*
  * --------------------------------------------------------------------

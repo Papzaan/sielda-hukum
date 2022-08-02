@@ -39,7 +39,7 @@
                                 <?php endif; ?>
                                 <div class="form-group">
                                     <label for="exampleInputEmail1">Nama OPD</label>
-                                    <input type="text" class="form-control" value="<?= $product->opd; ?>" name="opd" placeholder="OPD">
+                                    <input type="text" class="form-control" value="<?= $product->id_opd; ?>" name="opd" placeholder="OPD">
                                 </div>
                                 <div class="form-group">
                                     <label for="exampleInputPassword1">Nomor Usulan</label>

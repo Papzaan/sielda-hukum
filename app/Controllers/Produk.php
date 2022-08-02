@@ -5,12 +5,14 @@ namespace App\Controllers;
 use CodeIgniter\RESTful\ResourceController;
 use App\Models\OpdModel;
 use App\Models\ProdukModel;
+use TCPDF;
 
 class Produk extends ResourceController
 
 {
     public function __construct()
     {
+        $this->session = session();
         $this->model = new \App\Models\ProdukModel();
     }
 
@@ -22,9 +24,17 @@ class Produk extends ResourceController
     public function index()
     {
         //Halaman List Produk Hukum
-        $dataProduct = $this->model->findAll();
-
-        return view('pages/ListProduk', ['produk' => $dataProduct]);
+        //$dataProduct = $this->model->findAll();
+        //cek role dari session
+        if ($this->session->get('status') == 'admin') {
+            $dataProduct =  $this->model->getProdukAdmin()->getResult();
+            return view('pages/ListProduk', ['produk' => $dataProduct]);
+        } else if ($this->session->get('status') == 'user') {
+            $dataProduct =  $this->model->getProdukHukum()->getResult();
+            return view('pages/ListProduk', ['produk' => $dataProduct]);
+        } else {
+            return redirect()->to('/');
+        }
     }
 
     /**
@@ -37,6 +47,10 @@ class Produk extends ResourceController
         //
     }
 
+    public function kotakmasuk()
+    {
+        return view('pages/KotakMasuk');
+    }
     /**
      * Return a new resource object, with default properties
      *
@@ -71,6 +85,14 @@ class Produk extends ResourceController
                     'mime_in' => 'File Extention Harus Berupa docx,doc',
                     'max_size' => 'Ukuran File Maksimal 20 MB'
                 ]
+            ],
+            'nota_dinas' => [
+                'rules' => 'uploaded[nota_dinas]|mime_in[nota_dinas,application/pdf,application/docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/zip,application/msword,application/vnd.ms-office]|max_size[nota_dinas,20480]',
+                'errors' => [
+                    'uploaded' => 'Harus Ada File yang diupload',
+                    'mime_in' => 'File Extention Harus Berupa docx,doc',
+                    'max_size' => 'Ukuran File Maksimal 20 MB'
+                ]
             ]
         ])) {
             session()->setFlashdata('error', $this->validator->listErrors());
@@ -83,10 +105,17 @@ class Produk extends ResourceController
         //ambil nama file
         $namaFile = $berkas->getName();
 
+        //Tangkap File Docx
+        $berkas = $this->request->getFile('nota_dinas');
+        //Pindahkan ke Folder Upload/berkas
+        $berkas->move('uploads/berkas');
+        //ambil nama file
+        $namaFiled = $berkas->getName();
+
         //Menambah Produk Hukum Baru
         //$dataProduct = $this->request->getPost();
         $this->model->insert([
-            'opd' => $this->request->getVar('opd'),
+
             'no_usulan' => $this->request->getVar('no_usulan'),
             'judul' => $this->request->getVar('judul'),
             'jenis' => $this->request->getVar('jenis'),
@@ -95,8 +124,11 @@ class Produk extends ResourceController
             'perihal_nota' => $this->request->getVar('perihal_nota'),
             'isi_nota' => $this->request->getVar('isi_nota'),
             'usulan_produk' => $namaFile,
+            'status' => $this->request->getVar('status'),
             'penanggung_jawab' => $this->request->getVar('penanggung_jawab'),
-            'no_wa' => $this->request->getVar('no_wa')
+            'nota_dinas' => $namaFiled,
+            'no_wa' => $this->request->getVar('no_wa'),
+            'id_opd' => $this->request->getVar('id_opd'),
         ]);
 
         session()->setFlashdata('pesan', 'Data Berhasil ditambahkan.');
@@ -113,10 +145,17 @@ class Produk extends ResourceController
     {
         //Mengubah Data Produk Hukum
         $dataProduct = $this->model->where('id', $id)->first();
-
         return view('/pages/editproduk', ['product' => $dataProduct]);
     }
 
+    public function editsatus($id = null)
+    {
+        //Mengubah Data Produk Status
+        $dataProduct = $this->request->getPost();
+        $this->model->where('id', $id)->set($dataProduct)->update();
+
+        return redirect()->to('/home/kotakmasuk');
+    }
     /**
      * Add or update a model resource, from "posted" properties
      *

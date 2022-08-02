@@ -120,13 +120,29 @@
                                 </p>
                             </a>
                         </li>
+                        <?php $this->session = session(); ?>
+                        <?php if ($this->session->get('status') == "admin") {
+                            $this->session = session();
+                        ?>
+                            <li class="nav-item">
+                                <a href="<?php base_url(); ?>/home/kotakmasuk" class="nav-link">
+                                    <i class="nav-icon fa fa-inbox"></i>
+                                    <p>
+                                        Kotak Masuk
+                                        <span class="right badge badge-danger"></span>
+                                    </p>
+                                </a>
+                            </li>
+                        <?php } ?>
                     </ul>
                 </nav>
                 <!-- /.sidebar-menu -->
             </div>
             <!-- /.sidebar -->
         </aside>
+
         <?= $this->renderSection('content') ?>
+
         <footer class="main-footer">
             <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong>
             All rights reserved.
@@ -211,6 +227,15 @@
     <script>
         function prevFile() {
             const berkas = document.querySelector('#usulan_produk');
+            const Berkaslabel = document.querySelector('.custom-file-label');
+
+            Berkaslabel.textContent = berkas.files[0].name;
+        }
+    </script>
+
+    <script>
+        function prevFilen() {
+            const berkas = document.querySelector('#nota_dinas');
             const Berkaslabel = document.querySelector('.custom-file-label');
 
             Berkaslabel.textContent = berkas.files[0].name;
